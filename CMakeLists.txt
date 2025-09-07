@@ -4,5 +4,4 @@ project(template_metaprogramming)
 set(CMAKE_CXX_STANDARD 23)
 
 add_executable(template_metaprogramming 
-    main.cpp
-    TypelevelSet2.cpp)
+    dispatcher.cpp)
