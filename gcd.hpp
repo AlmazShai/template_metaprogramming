@@ -13,7 +13,7 @@ template<int Val1, int Val2>
 struct GCD {
     static constexpr int value = GCD<Val2, Val1 % Val2>::value;
 };
-
+ 
 
 
 static_assert(GCD<6, 3>::value == 3);
