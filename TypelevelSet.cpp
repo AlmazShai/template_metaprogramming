@@ -144,7 +144,7 @@ struct RemoveFirst<R, Vector<H, Vals...>> {
 
 template<int R, int...Vals>
 struct RemoveFirst<R, Vector<Vals...>> {
-     using type = Vector<Vals..>;
+     using type = Vector<Vals...>;
 };
 // ^ Your code goes here
 
@@ -320,20 +320,24 @@ template<int N, typename Vec>
 struct Get {};
 
 template<int First, int...Vals>
-struct Get<0, Vector<Vals...>> {
+struct Get<0, Vector<First, Vals...>> {
      static constexpr auto value = First;
 };
 
+template<int A, int B>
+concept LessThan = (A < B);
+
 template<int N, int First, int...Vals>
+     requires LessThan<N, sizeof...(Vals) + 1>
 struct Get<N, Vector<First, Vals...>> {
-     static constexpr auto value = Get<N - 1, Vector<Vals...>>::value; 
+     static constexpr auto value = Get<N - 1, Vector<Vals...>>::value;
 };
 // ^ Your code goes here
 
 static_assert(Get<0, Vector<0,1,2>>::value == 0);
 static_assert(Get<1, Vector<0,1,2>>::value == 1);
 static_assert(Get<2, Vector<0,1,2>>::value == 2);
-static_assert(Get<9, Vector<0,1,2>>::value == 2); // How good is your error message?
+// static_assert(Get<9, Vector<0,1,2>>::value == 2); // How good is your error message?
 
 
 /**
