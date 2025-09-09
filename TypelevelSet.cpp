@@ -53,19 +53,9 @@ static_assert(std::is_same_v<Vector<1,2>, Vector<1,2>>);
  * See main() below.
  */
 template<int...Vals>
-void print() {
- std::cout << std::endl;
-}
-
-template<int Val>
-void print(Vector<Val>) {
- std::cout << Val << std::endl;
-}
-
-template<int Val, int...Vals>
-void print(Vector<Val, Vals...>) {
- std::cout << Val << ' ';
- print(Vector<Vals...>{});
+constexpr void print(Vector<Vals...>) {
+    ((std::cout << Vals << ' '), ...);
+    std::cout << '\n';
 }
 
 
@@ -117,19 +107,19 @@ static_assert(std::is_same_v< Append<4, Vector<1,2,3>>::type , Vector<1,2,3,4> >
  */
 
 // Your code goes here:
-// ^ Your code goes here
 template<typename Vec>
 struct PopBack {};
 
 template<int H, int HH, int...Vals>
 struct PopBack<Vector<H, HH, Vals...>> {
- using type = typename Prepend<H, typename PopBack<Vector<HH, Vals...>>::type>::type;
+     using type = typename Prepend<H, typename PopBack<Vector<HH, Vals...>>::type>::type;
 };
 
 template<int H, int...Vals>
 struct PopBack<Vector<H, Vals...>> {
- using type = Vector<Vals...>;
+     using type = Vector<Vals...>;
 };
+// ^ Your code goes here
 
 static_assert(std::is_same_v< PopBack<Vector<1,2,3,4>>::type , Vector<1,2,3> >);
 
@@ -139,24 +129,24 @@ static_assert(std::is_same_v< PopBack<Vector<1,2,3,4>>::type , Vector<1,2,3> >);
  */
 
 // Your code goes here:
-// ^ Your code goes here
 template<int Val, typename Vec>
 struct RemoveFirst {};
 
 template<int R, int...Vals>
 struct RemoveFirst<R, Vector<R, Vals...>>{
- using type = Vector<Vals...>;
+     using type = Vector<Vals...>;
 };
 
 template<int R, int H, int...Vals>
 struct RemoveFirst<R, Vector<H, Vals...>> {
- using type = typename Prepend<H, typename RemoveFirst<R, Vector<Vals...>>::type>::type;
+     using type = typename Prepend<H, typename RemoveFirst<R, Vector<Vals...>>::type>::type;
 };
 
 template<int R, int...Vals>
 struct RemoveFirst<R, Vector<Vals...>> {
- using type = Vector<Vals..>;
+     using type = Vector<Vals..>;
 };
+// ^ Your code goes here
 
 
 static_assert(std::is_same_v<RemoveFirst<1, Vector<1,1,2>>::type, Vector<1,2>>);
@@ -167,11 +157,9 @@ static_assert(std::is_same_v<RemoveFirst<1, Vector<1,1,2>>::type, Vector<1,2>>);
  */
 
 // Your code goes here:
-// ^ Your code goes here
 template<int R, typename Vec>
 struct RemoveAll {
 };
-
 
 // Match
 template<int R, int...Vals>
@@ -179,7 +167,7 @@ struct RemoveAll<R, Vector<R, Vals...>> {
      using type = typename RemoveAll<R, Vector<Vals...>>::type;
 };
 
-// Not matching
+// No matching
 template<int R, int H, int...Vals>
 struct RemoveAll<R, Vector<H, Vals...>> {
      using type = typename Prepend<H, typename RemoveAll<R, Vector<Vals...>>::type>::type;
@@ -188,8 +176,9 @@ struct RemoveAll<R, Vector<H, Vals...>> {
 // Empty
 template<int R, int...Vals>
 struct RemoveAll<R, Vector<Vals...>> {
- using type = Vector<Vals...>;
+     using type = Vector<Vals...>;
 };
+// ^ Your code goes here
 
 static_assert(std::is_same_v<RemoveAll<9, Vector<1,9,2,9,3,9>>::type, Vector<1,2,3>>);
 
@@ -200,21 +189,19 @@ static_assert(std::is_same_v<RemoveAll<9, Vector<1,9,2,9,3,9>>::type, Vector<1,2
  */
 
 // Your code goes here:
-// ^ Your code goes here
 template<typename Vec>
-struct Length;
+struct Length {};
 
-template<int...Vals>
-struct Length<Vector<Vals...>> {
-     static constexpr int value = 0;
+template<>
+struct Length<Vector<>> {
+     static constexpr auto value = 0;
 };
 
-template<int V, int...Vals>
-struct Length<Vector<V, Vals...>> {
-     static constexpr int value = Length<Vector<Vals...>>::value + 1;
+template<int H, int...Vals>
+struct Length<Vector<H, Vals...>> {
+     static constexpr auto value = Length<Vector<Vals...>>::value + 1;
 };
-
-
+// ^ Your code goes here
 
 static_assert(Length<Vector<1,2,3>>::value == 3);
 
@@ -225,9 +212,9 @@ static_assert(Length<Vector<1,2,3>>::value == 3);
  */
 
 // Your code goes here:
-// ^ Your code goes here
 template<typename Vec>
-inline constexpr std::size_t length = Length<Vec>::value;
+static constexpr auto length = Length<Vec>::value;
+// ^ Your code goes here
 
 
 static_assert(length<Vector<>> == 0);
@@ -239,21 +226,19 @@ static_assert(length<Vector<1,2,3>> == 3);
  */
 
 // Your code goes here:
-// ^ Your code goes here
 template<typename Vec>
-struct Min {
+struct Min {};
+
+template<int Last>
+struct Min<Vector<Last>> {
+     static constexpr auto value = Last;
 };
 
-template<int V>
-struct Min<Vector<V>> {
-     static constexpr std::size_t value = V;
+template<int H, int...Rest>
+struct Min<Vector<H, Rest...>> {
+     static constexpr auto value = Min<Vector<Rest...>>::value < H ? Min<Vector<Rest...>>::value : H;
 };
-
-template<int H, int...Vals>
-struct Min<Vector<H, Vals...>> {
-     static constexpr size_t value = Min<Vector<Vals...>>::value < H ? Min<Vector<Vals...>>::value : H;
-};
-
+// ^ Your code goes here
 
 static_assert(Min<Vector<3,1,2>>::value == 1);
 static_assert(Min<Vector<1,2,3>>::value == 1);
@@ -279,9 +264,30 @@ static_assert(Min<Vector<3,2,1>>::value == 1);
  */
 
 // Your code goes here:
+template<typename Vec>
+struct Uniq {};
+
+// last element
+template<int Last>
+struct Uniq<Vector<Last>> {
+     using type = Vector<Last>;
+};
+
+// no match
+template<int Prev, int Head, int...Rest>
+struct Uniq<Vector<Prev, Head, Rest...>> {
+     using type = typename Prepend<Prev, typename Uniq<Vector<Head, Rest...>>::type>::type;
+};
+
+// match
+template<int Prev, int...Rest>
+struct Uniq<Vector<Prev, Prev, Rest...>> {
+     using type = typename Uniq<Vector<Prev, Rest...>>::type;
+};
+
 // ^ Your code goes here
 
-// static_assert(std::is_same_v<Uniq<Vector<1,1,2,2,1,1>>::type, Vector<1,2,1>>);
+static_assert(std::is_same_v<Uniq<Vector<1,1,2,2,1,1>>::type, Vector<1,2,1>>);
 
 
 /**
@@ -310,12 +316,24 @@ static_assert(Min<Vector<3,2,1>>::value == 1);
  */
 
 // Your code goes here:
+template<int N, typename Vec>
+struct Get {};
+
+template<int First, int...Vals>
+struct Get<0, Vector<Vals...>> {
+     static constexpr auto value = First;
+};
+
+template<int N, int First, int...Vals>
+struct Get<N, Vector<First, Vals...>> {
+     static constexpr auto value = Get<N - 1, Vector<Vals...>>::value; 
+};
 // ^ Your code goes here
 
-// static_assert(Get<0, Vector<0,1,2>>::value == 0);
-// static_assert(Get<1, Vector<0,1,2>>::value == 1);
-// static_assert(Get<2, Vector<0,1,2>>::value == 2);
-// static_assert(Get<9, Vector<0,1,2>>::value == 2); // How good is your error message?
+static_assert(Get<0, Vector<0,1,2>>::value == 0);
+static_assert(Get<1, Vector<0,1,2>>::value == 1);
+static_assert(Get<2, Vector<0,1,2>>::value == 2);
+static_assert(Get<9, Vector<0,1,2>>::value == 2); // How good is your error message?
 
 
 /**
