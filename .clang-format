@@ -1,0 +1,36 @@
+---
+BasedOnStyle: Microsoft
+AccessModifierOffset: -4
+AlignAfterOpenBracket: AlwaysBreak
+AllowAllParametersOfDeclarationOnNextLine: false
+AllowAllConstructorInitializersOnNextLine: false
+AllowAllArgumentsOnNextLine: false
+AllowShortBlocksOnASingleLine: true
+AlignConsecutiveAssignments: false
+AlignConsecutiveMacros: false
+BinPackArguments: false
+BinPackParameters: false
+BreakBeforeBraces: Custom
+BraceWrapping:
+  AfterCaseLabel: true
+  AfterEnum: true
+  AfterControlStatement: true
+  AfterStruct: true
+  AfterNamespace: false
+  AfterUnion: true
+  AfterObjCDeclaration: true
+  BeforeLambdaBody: true
+BreakConstructorInitializersBeforeComma: true
+BreakInheritanceList: BeforeComma
+BreakBeforeBinaryOperators: NonAssignment
+AlwaysBreakTemplateDeclarations : Yes
+ColumnLimit: 140
+ContinuationIndentWidth: 4
+CompactNamespaces: true
+FixNamespaceComments: false
+IncludeBlocks: Regroup
+SortIncludes: false
+DerivePointerAlignment: false
+PointerAlignment: Left
+PenaltyExcessCharacter: 120
+PenaltyReturnTypeOnItsOwnLine: 10000
